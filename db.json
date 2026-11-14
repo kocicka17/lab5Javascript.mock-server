@@ -1,0 +1,25 @@
+{
+  "ships": [
+    { "id": 1, "name": "Одеса",               "homePort": "Одеса",       "type": "Контейнеровоз", "displacement": "45000т", "captain": "Петренко В.І." },
+    { "id": 2, "name": "Чорноморськ",          "homePort": "Іллічівськ",  "type": "Танкер",        "displacement": "60000т", "captain": "Коваленко С.М." },
+    { "id": 3, "name": "Гетьман Сагайдачний",  "homePort": "Одеса",       "type": "Фрегат",        "displacement": "3500т",  "captain": "Шевченко П.П." },
+    { "id": 4, "name": "Маріуполь",            "homePort": "Маріуполь",   "type": "Суховантаж",    "displacement": "32000т", "captain": "Бондаренко О.Л." },
+    { "id": 5, "name": "Херсонес",             "homePort": "Севастополь", "type": "Круїзний",      "displacement": "18000т", "captain": "Литвиненко І.К." }
+  ],
+  "ports": [
+    { "id": 1, "name": "Порт Стамбул",   "country": "Туреччина", "dailyFee": 1200, "category": "Міжнародний" },
+    { "id": 2, "name": "Порт Пірей",     "country": "Греція",    "dailyFee": 1500, "category": "Вузловий" },
+    { "id": 3, "name": "Порт Констанца",  "country": "Румунія",   "dailyFee": 950,  "category": "Регіональний" },
+    { "id": 4, "name": "Порт Марсель",   "country": "Франція",   "dailyFee": 1800, "category": "Міжнародний" },
+    { "id": 5, "name": "Порт Бургас",    "country": "Болгарія",  "dailyFee": 700,  "category": "Регіональний" }
+  ],
+  "visits": [
+    { "id": 1, "shipId": 1, "portId": 1, "berthNumber": 12, "purpose": "Розвантаження",     "departureDate": "2026-05-12", "arrivalDate": "2026-05-10", "cargoPurpose": "Зерно",       "customsStatus": "Пройдено" },
+    { "id": 2, "shipId": 2, "portId": 2, "berthNumber": 5,  "purpose": "Бункерування",      "departureDate": "2026-06-03", "arrivalDate": "2026-06-01", "cargoPurpose": "Паливо",      "customsStatus": "Очікування" },
+    { "id": 3, "shipId": 1, "portId": 2, "berthNumber": 8,  "purpose": "Технічний огляд",    "departureDate": "2026-07-18", "arrivalDate": "2026-07-15", "cargoPurpose": "Обладнання",  "customsStatus": "Пройдено" },
+    { "id": 4, "shipId": 3, "portId": 3, "berthNumber": 3,  "purpose": "Поповнення запасів", "departureDate": "2026-08-11", "arrivalDate": "2026-08-10", "cargoPurpose": "Продукти",    "customsStatus": "Пройдено" },
+    { "id": 5, "shipId": 4, "portId": 1, "berthNumber": 7,  "purpose": "Завантаження",       "departureDate": "2026-09-05", "arrivalDate": "2026-09-02", "cargoPurpose": "Метал",       "customsStatus": "Очікування" },
+    { "id": 6, "shipId": 5, "portId": 4, "berthNumber": 2,  "purpose": "Круїзна стоянка",    "departureDate": "2026-09-20", "arrivalDate": "2026-09-18", "cargoPurpose": "Пасажири",    "customsStatus": "Пройдено" },
+    { "id": 7, "shipId": 2, "portId": 5, "berthNumber": 4,  "purpose": "Розвантаження",      "departureDate": "2026-10-10", "arrivalDate": "2026-10-08", "cargoPurpose": "Нафта",       "customsStatus": "Пройдено" }
+  ]
+}

@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лабораторна робота №5 — Варіант 19 (Судноплавство)</title>
+    <style>
+        :root {
+            --primary: #1d4ed8;
+            --primary-hover: #1e40af;
+            --secondary: #0f766e;
+            --secondary-hover: #115e59;
+            --accent: #d97706;
+            --accent-hover: #b45309;
+            --danger: #dc2626;
+            --danger-hover: #b91c1c;
+            --bg: #FFF0F5;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #fce7f3;
+            --radius: 10px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.06);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
+            padding: 24px 16px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        
+        header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        header h1 {
+            font-size: 1.85rem;
+            color: var(--text-main);
+            font-weight: 700;
+        }
+        header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-top: 4px;
+        }
+
+        
+        .config-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+        .config-inputs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: flex-end;
+        }
+        .config-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .field-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            line-height: 1.2;
+            height: 18px;
+        }
+        .config-field input {
+            padding: 9px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            min-width: 240px;
+            height: 40px;
+            box-sizing: border-box;
+            background: #fff;
+        }
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: #ecfdf5;
+            color: #065f46;
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+        }
+
+        
+        .nav-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .btn:hover {
+            opacity: 0.92;
+            transform: translateY(-1px);
+        }
+        .btn:active {
+            transform: translateY(0);
+        }
+        .btn-ships   { background: #F19CBB; }
+        .btn-ports   { background: #FF69B4; }
+        .btn-visits  { background: #FFA6C9; }
+        .btn-related { background: #FF1493; }
+        .btn-seed    { background: #F77FBE; }
+
+        
+        .toast {
+            padding: 12px 18px;
+            border-radius: 8px;
+            margin-bottom: 18px;
+            font-size: 0.92rem;
+            display: none;
+            animation: fadeIn 0.2s ease-in-out;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+        .toast-ok  { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+        .toast-err { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+
+        
+        .toolbar {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 14px;
+        }
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            min-width: 280px;
+        }
+        .search-box input {
+            flex: 1;
+            padding: 9px 14px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+        .sort-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        select {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            background: #fff;
+            color: var(--text-main);
+        }
+
+        /* Таблиця */
+        .table-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .table-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+        }
+        .table-header h2 {
+            font-size: 1.25rem;
+            color: var(--text-main);
+            font-weight: 700;
+        }
+        .table-wrap {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+        th, td {
+            padding: 12px 16px;
+            font-size: 0.88rem;
+            border-bottom: 1px solid var(--border);
+        }
+        th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #475569;
+            white-space: nowrap;
+        }
+        tr:hover td {
+            background: #f1f5f9;
+        }
+        .actions-cell {
+            white-space: nowrap;
+            width: 1%;
+        }
+        .btn-sm {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: none;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-right: 6px;
+            color: #fff;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+            white-space: nowrap;
+        }
+        .btn-sm:hover {
+            opacity: 0.88;
+            transform: translateY(-1px);
+        }
+        .btn-edit   { background: #f59e0b; }
+        .btn-delete { background: var(--danger); }
+
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 9999px;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+        .badge-green  { background: #dcfce7; color: #166534; }
+        .badge-yellow { background: #fef9c3; color: #854d0e; }
+        .badge-red    { background: #fee2e2; color: #991b1b; }
+
+        
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 20px;
+            background: #fff;
+            border-top: 1px solid var(--border);
+        }
+        .pagination-btn {
+            padding: 6px 16px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: #fff;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .pagination-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(2px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-card {
+            background: #fff;
+            border-radius: var(--radius);
+            width: 95%;
+            max-width: 650px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.2);
+            padding: 24px;
+            animation: zoomIn 0.2s ease;
+        }
+        @keyframes zoomIn {
+            from { transform: scale(0.95); }
+            to { transform: scale(1); }
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .modal-header h3 {
+            font-size: 1.25rem;
+            color: var(--text-main);
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+        .form-grid.single-col {
+            grid-template-columns: 1fr;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .form-group label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #475569;
+        }
+        .form-group input, .form-group select {
+            padding: 9px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+        .modal-footer {
+            margin-top: 22px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* Консоль логів запитів */
+        .log-section {
+            background: #0f172a;
+            border-radius: var(--radius);
+            padding: 16px;
+            color: #38bdf8;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.82rem;
+            line-height: 1.5;
+            max-height: 220px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            border: 1px solid #1e293b;
+        }
+        .log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            color: #94a3b8;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Лабораторна робота №5 — Варіант 19</h1>
+        <p>Предметна область: <b>«Судноплавство»</b> &nbsp;|&nbsp; REST API + ООП (Клас <code>ApiRepository</code>)</p>
+    </header>
+
+    
+    <!-- Налаштування API та серверу -->
+    <div class="config-card">
+        <div class="config-inputs">
+            <div class="config-field">
+                <span class="field-label">API Endpoint (api.php):</span>
+                <input type="text" id="apiBaseUrl" value="http://localhost/api.php">
+            </div>
+            <div class="config-field">
+                <span class="field-label">Суфікс студента:</span>
+                <input type="text" id="studentSuffix" value="_starunchak" placeholder="_starunchak">
+            </div>
+        </div>
+        <div>
+            <span class="status-badge" id="statusBadge">
+                <span class="status-dot"></span> XAMPP REST API активний
+            </span>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <div class="nav-actions">
+        <button class="btn btn-ships" onclick="switchEntity('ships')">Кораблі (Ships)</button>
+        <button class="btn btn-ports" onclick="switchEntity('ports')">Порти (Ports)</button>
+        <button class="btn btn-visits" onclick="switchEntity('visits')">Відвідування (Visits)</button>
+        <button class="btn btn-related" onclick="loadRelatedVisits()">Пов'язані дані (Зв'язок M:N)</button>
+        <button class="btn btn-seed" onclick="seedSampleData()">Заповнити базу з Лаб 4</button>
+    </div>
+
+    <div class="toolbar" id="toolbar">
+        <div class="search-box">
+            <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted);">Пошук:</span>
+            <input type="text" id="searchInput" placeholder="Пошук у поточній таблиці..." oninput="handleSearch()">
+        </div>
+        <div class="sort-box">
+            <label style="font-size: 0.85rem; font-weight: 600;">Сортувати:</label>
+            <select id="sortField" onchange="handleSort()"></select>
+            <select id="sortOrder" onchange="handleSort()">
+                <option value="asc">За зростанням</option>
+                <option value="desc">За спаданням</option>
+            </select>
+        </div>
+        <button class="btn btn-ships" id="btnAddRecord" onclick="openAddModal()">Додати запис</button>
+    </div>
+
+    <div class="table-card">
+        <div class="table-header">
+            <h2 id="tableTitle">Завантаження...</h2>
+            <span id="recordCount" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;"></span>
+        </div>
+        <div class="table-wrap" id="tableContainer">
+            
+        </div>
+        <div class="pagination" id="paginationBar">
+            <button class="pagination-btn" id="btnPrev" onclick="changePage(-1)">Попередня</button>
+            <span id="pageInfo" style="font-size: 0.85rem; font-weight: 600;">Сторінка 1 з 1</span>
+            <button class="pagination-btn" id="btnNext" onclick="changePage(1)">Наступна</button>
+        </div>
+    </div>
+
+    
+    <div class="log-header">
+        <span>HTTP ЖУРНАЛ ЗАПИТІВ (F12 → Console):</span>
+        <button style="background:none; border:none; color:#38bdf8; cursor:pointer; font-size:0.75rem;" onclick="clearLogs()">Очистити</button>
+    </div>
+    <div class="log-section" id="logBox">// Готовий до роботи. Натисніть будь-яку дію зверху.</div>
+</div>
+
+
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h3 id="modalTitle">Створити запис</h3>
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+        </div>
+        <form id="recordForm" onsubmit="handleFormSubmit(event)">
+            <input type="hidden" id="editRecordId">
+            <div id="dynamicFormFields" class="form-grid">
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" style="background:#94a3b8;" onclick="closeModal()">Скасувати</button>
+                <button type="submit" class="btn btn-ships" id="btnModalSave">Зберегти</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+
+class ApiRepository {
+    #baseUrl;
+    #type;
+
+    constructor(baseUrl, type) {
+        this.#baseUrl = baseUrl;
+        this.#type = type;
+    }
+
+    getType() { return this.#type; }
+
+    async readAll() {
+        const url = `${this.#baseUrl}?type=${this.#type}`;
+        logHttp('GET', url);
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`Помилка читання (${res.status})`);
+        return res.json();
+    }
+
+    async readById(id) {
+        const url = `${this.#baseUrl}?type=${this.#type}&id=${id}`;
+        logHttp('GET (by ID)', url);
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`Помилка отримання #${id} (${res.status})`);
+        return res.json();
+    }
+
+    async create(item) {
+        const url = `${this.#baseUrl}?type=${this.#type}`;
+        logHttp('POST', url, item);
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(item)
+        });
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.error || `Помилка створення (${res.status})`);
+        }
+        return res.json();
+    }
+
+    async update(id, changes) {
+        const url = `${this.#baseUrl}?type=${this.#type}&id=${id}`;
+        logHttp('PATCH', url, changes);
+        const res = await fetch(url, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(changes)
+        });
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.error || `Помилка оновлення (${res.status})`);
+        }
+        return res.json();
+    }
+
+    async delete(id) {
+        const url = `${this.#baseUrl}?type=${this.#type}&id=${id}`;
+        logHttp('DELETE', url);
+        const res = await fetch(url, { method: 'DELETE' });
+        if (!res.ok) throw new Error(`Помилка видалення (${res.status})`);
+        return res.json();
+    }
+}
+
+
+let activeEntity = 'ships'; 
+let rawData = [];
+let filteredData = [];
+let currentPage = 1;
+const PER_PAGE = 5;
+
+
+let cachedShips = [];
+let cachedPorts = [];
+
+
+function logHttp(method, url, payload = null) {
+    const time = new Date().toLocaleTimeString();
+    let text = `[${time}] ${method} ${url}`;
+    if (payload) text += `\nТіло: ${JSON.stringify(payload)}`;
+    console.log(text);
+    const box = document.getElementById('logBox');
+    box.innerText = text + '\n\n' + box.innerText;
+}
+
+function clearLogs() {
+    document.getElementById('logBox').innerText = '// Журнал очищено';
+}
+
+function showToast(msg, isError = false) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className = 'toast ' + (isError ? 'toast-err' : 'toast-ok');
+    el.style.display = 'block';
+    setTimeout(() => { el.style.display = 'none'; }, 4000);
+}
+
+function getRepo(entityName) {
+    const baseUrl = document.getElementById('apiBaseUrl').value.trim();
+    const suffix = document.getElementById('studentSuffix').value.trim();
+    
+    return new ApiRepository(baseUrl, `${entityName}${suffix}`);
+}
+
+
+const ENTITY_CONFIG = {
+    ships: {
+        title: 'Кораблі (Ships)',
+        btnColor: '#F19CBB',
+        fields: [
+            { key: 'name', label: 'Назва', type: 'text', req: true },
+            { key: 'homePort', label: 'Порт приписки', type: 'text', req: true },
+            { key: 'type', label: 'Тип судна', type: 'text', req: true },
+            { key: 'displacement', label: 'Водотоннажність', type: 'text', req: true },
+            { key: 'captain', label: 'Капітан', type: 'text', req: true }
+        ]
+    },
+    ports: {
+        title: 'Порти (Ports)',
+        btnColor: '#FF69B4',
+        fields: [
+            { key: 'name', label: 'Назва порту', type: 'text', req: true },
+            { key: 'country', label: 'Країна', type: 'text', req: true },
+            { key: 'dailyFee', label: 'Ціна одного дня ($)', type: 'number', req: true },
+            { key: 'category', label: 'Категорія', type: 'text', req: true }
+        ]
+    },
+    visits: {
+        title: 'Відвідування (Visits)',
+        btnColor: '#FFA6C9',
+        fields: [
+            { key: 'shipId', label: 'Корабель', type: 'select_ship', req: true },
+            { key: 'portId', label: 'Порт', type: 'select_port', req: true },
+            { key: 'berthNumber', label: '№ причалу', type: 'number', req: true },
+            { key: 'purpose', label: 'Мета відвідування', type: 'text', req: true },
+            { key: 'arrivalDate', label: 'Дата прибуття', type: 'date', req: true },
+            { key: 'departureDate', label: 'Дата вибуття', type: 'date', req: true },
+            { key: 'cargoPurpose', label: 'Мета вантажу', type: 'text', req: true },
+            { key: 'customsStatus', label: 'Митний статус', type: 'select_status', req: true }
+        ]
+    }
+};
+
+async function switchEntity(entityKey) {
+    activeEntity = entityKey;
+    document.getElementById('toolbar').style.display = 'flex';
+    document.getElementById('paginationBar').style.display = 'flex';
+    document.getElementById('searchInput').value = '';
+    
+    const cfg = ENTITY_CONFIG[entityKey];
+    document.getElementById('tableTitle').textContent = cfg.title;
+    
+    // Налаштування кнопки "Додати"
+    const addBtn = document.getElementById('btnAddRecord');
+    addBtn.style.background = cfg.btnColor;
+    addBtn.textContent = `Додати ${entityKey === 'ships' ? 'корабель' : entityKey === 'ports' ? 'порт' : 'відвідування'}`;
+
+    // Заповнення селектора сортування
+    populateSortOptions(cfg.fields);
+
+    try {
+        const repo = getRepo(entityKey);
+        rawData = await repo.readAll();
+        filteredData = [...rawData];
+        currentPage = 1;
+        renderTable();
+        showToast(`Завантажено ${rawData.length} записів (${cfg.title})`);
+    } catch (e) {
+        showToast(e.message, true);
+    }
+}
+
+
+function renderTable() {
+    const total = filteredData.length;
+    document.getElementById('recordCount').textContent = `Всього записів: ${total}`;
+
+    const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
+    if (currentPage > totalPages) currentPage = totalPages;
+
+    const start = (currentPage - 1) * PER_PAGE;
+    const pageRecords = filteredData.slice(start, start + PER_PAGE);
+
+    const container = document.getElementById('tableContainer');
+
+    if (total === 0) {
+        container.innerHTML = `<div style="padding: 40px; text-align: center; color: var(--text-muted);">
+            Дані відсутні. Натисніть кнопку <b>"Заповнити базу з Лаб 4"</b> або створіть новий запис.
+        </div>`;
+        updatePagination(0, 1);
+        return;
+    }
+
+    if (activeEntity === 'ships') {
+        container.innerHTML = `<table>
+            <thead><tr>
+                <th>ID</th><th>Назва</th><th>Порт приписки</th><th>Тип</th><th>Водотоннажність</th><th>Капітан</th><th class="actions-cell">Дії</th>
+            </tr></thead>
+            <tbody>${pageRecords.map(s => `<tr>
+                <td><b>#${s.id}</b></td>
+                <td><b>${escapeHtml(s.name)}</b></td>
+                <td>${escapeHtml(s.homePort)}</td>
+                <td>${escapeHtml(s.type)}</td>
+                <td>${escapeHtml(s.displacement)}</td>
+                <td>${escapeHtml(s.captain)}</td>
+                <td class="actions-cell">
+                    <button class="btn-sm btn-edit" onclick="openEditModal(${s.id})">Редагувати</button>
+                    <button class="btn-sm btn-delete" onclick="handleDelete(${s.id})">Видалити</button>
+                </td>
+            </tr>`).join('')}</tbody>
+        </table>`;
+    } else if (activeEntity === 'ports') {
+        container.innerHTML = `<table>
+            <thead><tr>
+                <th>ID</th><th>Назва порту</th><th>Країна</th><th>Ціна дня</th><th>Категорія</th><th class="actions-cell">Дії</th>
+            </tr></thead>
+            <tbody>${pageRecords.map(p => `<tr>
+                <td><b>#${p.id}</b></td>
+                <td><b>${escapeHtml(p.name)}</b></td>
+                <td>${escapeHtml(p.country)}</td>
+                <td><span style="color:#059669; font-weight:600;">${p.dailyFee}$</span></td>
+                <td>${escapeHtml(p.category)}</td>
+                <td class="actions-cell">
+                    <button class="btn-sm btn-edit" onclick="openEditModal(${p.id})">Редагувати</button>
+                    <button class="btn-sm btn-delete" onclick="handleDelete(${p.id})">Видалити</button>
+                </td>
+            </tr>`).join('')}</tbody>
+        </table>`;
+    } else if (activeEntity === 'visits') {
+        container.innerHTML = `<table>
+            <thead><tr>
+                <th>ID</th><th>Корабель ID</th><th>Порт ID</th><th>Причал</th><th>Мета</th><th>Прибуття</th><th>Вибуття</th><th>Вантаж</th><th>Митниця</th><th class="actions-cell">Дії</th>
+            </tr></thead>
+            <tbody>${pageRecords.map(v => `<tr>
+                <td><b>#${v.id}</b></td>
+                <td>#${v.shipId}</td>
+                <td>#${v.portId}</td>
+                <td>№${v.berthNumber}</td>
+                <td>${escapeHtml(v.purpose)}</td>
+                <td>${v.arrivalDate || '—'}</td>
+                <td>${v.departureDate || '—'}</td>
+                <td>${escapeHtml(v.cargoPurpose)}</td>
+                <td>${renderCustomsBadge(v.customsStatus)}</td>
+                <td class="actions-cell">
+                    <button class="btn-sm btn-edit" onclick="openEditModal(${v.id})">Редагувати</button>
+                    <button class="btn-sm btn-delete" onclick="handleDelete(${v.id})">Видалити</button>
+                </td>
+            </tr>`).join('')}</tbody>
+        </table>`;
+    }
+
+    updatePagination(totalPages, currentPage);
+}
+
+function renderCustomsBadge(status) {
+    if (status === 'Пройдено') return '<span class="badge badge-green">Пройдено</span>';
+    if (status === 'Очікування') return '<span class="badge badge-yellow">Очікування</span>';
+    return `<span class="badge badge-red">${escapeHtml(status || '—')}</span>`;
+}
+
+function updatePagination(totalPages, current) {
+    document.getElementById('pageInfo').textContent = `Сторінка ${current} з ${totalPages || 1}`;
+    document.getElementById('btnPrev').disabled = current <= 1;
+    document.getElementById('btnNext').disabled = current >= totalPages;
+}
+
+function changePage(delta) {
+    currentPage += delta;
+    renderTable();
+}
+
+
+function populateSortOptions(fields) {
+    const sel = document.getElementById('sortField');
+    sel.innerHTML = '<option value="id">ID</option>' +
+        fields.map(f => `<option value="${f.key}">${f.label}</option>`).join('');
+}
+
+function handleSearch() {
+    const q = document.getElementById('searchInput').value.toLowerCase().trim();
+    if (!q) {
+        filteredData = [...rawData];
+    } else {
+        filteredData = rawData.filter(item => {
+            return Object.values(item).some(val => 
+                String(val).toLowerCase().includes(q)
+            );
+        });
+    }
+    currentPage = 1;
+    renderTable();
+}
+
+function handleSort() {
+    const field = document.getElementById('sortField').value;
+    const order = document.getElementById('sortOrder').value;
+
+    filteredData.sort((a, b) => {
+        let va = a[field], vb = b[field];
+        if (typeof va === 'number' && typeof vb === 'number') {
+            return order === 'asc' ? va - vb : vb - va;
+        }
+        va = String(va || '').toLowerCase();
+        vb = String(vb || '').toLowerCase();
+        if (va < vb) return order === 'asc' ? -1 : 1;
+        if (va > vb) return order === 'asc' ? 1 : -1;
+        return 0;
+    });
+
+    currentPage = 1;
+    renderTable();
+}
+
+
+async function loadRelatedVisits() {
+    activeEntity = 'related';
+    document.getElementById('toolbar').style.display = 'none';
+    document.getElementById('paginationBar').style.display = 'none';
+    document.getElementById('tableTitle').textContent = "Пов'язані дані (Судна у портах)";
+
+    try {
+        const [ships, ports, visits] = await Promise.all([
+            getRepo('ships').readAll(),
+            getRepo('ports').readAll(),
+            getRepo('visits').readAll()
+        ]);
+
+        const shipMap = Object.fromEntries(ships.map(s => [s.id, s]));
+        const portMap = Object.fromEntries(ports.map(p => [p.id, p]));
+
+        document.getElementById('recordCount').textContent = `Всього відвідувань: ${visits.length}`;
+
+        document.getElementById('tableContainer').innerHTML = `<table>
+            <thead><tr>
+                <th>ID</th>
+                <th>Корабель</th>
+                <th>Капітан</th>
+                <th>Порт призначення</th>
+                <th>Країна</th>
+                <th>Ціна/доба</th>
+                <th>Причал</th>
+                <th>Мета візиту</th>
+                <th>Прибуття - Вибуття</th>
+                <th>Митний статус</th>
+            </tr></thead>
+            <tbody>${visits.map(v => {
+                const s = shipMap[v.shipId] || { name: 'Невідомий', captain: '—' };
+                const p = portMap[v.portId] || { name: 'Невідомий', country: '—', dailyFee: '—' };
+                return `<tr>
+                    <td><b>#${v.id}</b></td>
+                    <td> <b>${escapeHtml(s.name)}</b></td>
+                    <td>${escapeHtml(s.captain)}</td>
+                    <td> <b>${escapeHtml(p.name)}</b></td>
+                    <td>${escapeHtml(p.country)}</td>
+                    <td style="color:#059669; font-weight:600;">${p.dailyFee}$</td>
+                    <td>№${v.berthNumber}</td>
+                    <td>${escapeHtml(v.purpose)} (${escapeHtml(v.cargoPurpose)})</td>
+                    <td>${v.arrivalDate} → ${v.departureDate}</td>
+                    <td>${renderCustomsBadge(v.customsStatus)}</td>
+                </tr>`;
+            }).join('')}</tbody>
+        </table>`;
+
+        showToast("Пов'язані дані успішно зчитано з сервера!");
+    } catch (e) {
+        showToast("Помилка завантаження пов'язаних даних: " + e.message, true);
+    }
+}
+
+
+async function openAddModal() {
+    if (activeEntity === 'related') return;
+    document.getElementById('modalTitle').textContent = `Додати новий запис (${ENTITY_CONFIG[activeEntity].title})`;
+    document.getElementById('editRecordId').value = '';
+    await buildFormFields();
+    document.getElementById('modalOverlay').classList.add('active');
+}
+
+async function openEditModal(id) {
+    try {
+        const repo = getRepo(activeEntity);
+        const item = await repo.readById(id);
+        document.getElementById('modalTitle').textContent = `Редагування запису #${id}`;
+        document.getElementById('editRecordId').value = id;
+        await buildFormFields(item);
+        document.getElementById('modalOverlay').classList.add('active');
+    } catch (e) {
+        showToast(e.message, true);
+    }
+}
+
+function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('active');
+}
+
+async function buildFormFields(item = null) {
+    const container = document.getElementById('dynamicFormFields');
+    const cfg = ENTITY_CONFIG[activeEntity];
+
+    
+    if (activeEntity === 'visits') {
+        if (cachedShips.length === 0) cachedShips = await getRepo('ships').readAll();
+        if (cachedPorts.length === 0) cachedPorts = await getRepo('ports').readAll();
+    }
+
+    container.innerHTML = cfg.fields.map(f => {
+        const val = item ? (item[f.key] ?? '') : '';
+        let inputHtml = '';
+
+        if (f.type === 'select_ship') {
+            inputHtml = `<select name="${f.key}" required>
+                ${cachedShips.map(s => `<option value="${s.id}" ${val == s.id ? 'selected' : ''}>${escapeHtml(s.name)} (ID: ${s.id})</option>`).join('')}
+            </select>`;
+        } else if (f.type === 'select_port') {
+            inputHtml = `<select name="${f.key}" required>
+                ${cachedPorts.map(p => `<option value="${p.id}" ${val == p.id ? 'selected' : ''}>${escapeHtml(p.name)} (${escapeHtml(p.country)})</option>`).join('')}
+            </select>`;
+        } else if (f.type === 'select_status') {
+            inputHtml = `<select name="${f.key}">
+                <option value="Пройдено" ${val === 'Пройдено' ? 'selected' : ''}>Пройдено</option>
+                <option value="Очікування" ${val === 'Очікування' ? 'selected' : ''}>Очікування</option>
+                <option value="Відхилено" ${val === 'Відхилено' ? 'selected' : ''}>Відхилено</option>
+            </select>`;
+        } else {
+            inputHtml = `<input type="${f.type}" name="${f.key}" value="${escapeHtml(String(val))}" ${f.req ? 'required' : ''}>`;
+        }
+
+        return `<div class="form-group">
+            <label>${f.label}:</label>
+            ${inputHtml}
+        </div>`;
+    }).join('');
+}
+
+async function handleFormSubmit(e) {
+    e.preventDefault();
+    const id = document.getElementById('editRecordId').value;
+    const form = e.target;
+    const formData = new FormData(form);
+    const body = {};
+
+    for (const [k, v] of formData.entries()) {
+        const cfgField = ENTITY_CONFIG[activeEntity].fields.find(f => f.key === k);
+        if (cfgField && cfgField.type === 'number') {
+            body[k] = Number(v);
+        } else if (k === 'shipId' || k === 'portId') {
+            body[k] = Number(v);
+        } else {
+            body[k] = v.trim();
+        }
+    }
+
+    try {
+        const repo = getRepo(activeEntity);
+        if (id) {
+            await repo.update(id, body);
+            showToast(`Запис #${id} успішно оновлено!`);
+        } else {
+            await repo.create(body);
+            showToast("Новий запис успішно додано до сервера!");
+        }
+        closeModal();
+        await switchEntity(activeEntity);
+    } catch (err) {
+        showToast(err.message, true);
+    }
+}
+
+async function handleDelete(id) {
+    if (!confirm(`Ви дійсно бажаєте видалити запис #${id} з бази даних?`)) return;
+    try {
+        const repo = getRepo(activeEntity);
+        await repo.delete(id);
+        showToast(`Запис #${id} видалено з сервера!`);
+        await switchEntity(activeEntity);
+    } catch (err) {
+        showToast(err.message, true);
+    }
+}
+
+
+
+async function seedSampleData() {
+    if (!confirm("Заповнити базу даних тестовими даними Варіанту 19 (Кораблі, Порти, Відвідування)?")) return;
+
+    try {
+        const shipRepo = getRepo('ships');
+        const portRepo = getRepo('ports');
+        const visitRepo = getRepo('visits');
+
+        showToast("Створення тестових даних на сервері...");
+
+        
+        const s1 = await shipRepo.create({ name: "Одеса", homePort: "Одеса", type: "Контейнеровоз", displacement: "45000т", captain: "Петренко В.І." });
+        const s2 = await shipRepo.create({ name: "Чорноморськ", homePort: "Іллічівськ", type: "Танкер", displacement: "60000т", captain: "Коваленко С.М." });
+        const s3 = await shipRepo.create({ name: "Гетьман Сагайдачний", homePort: "Одеса", type: "Фрегат", displacement: "3500т", captain: "Шевченко П.П." });
+
+        
+        const p1 = await portRepo.create({ name: "Порт Стамбул", country: "Туреччина", dailyFee: 1200, category: "Міжнародний" });
+        const p2 = await portRepo.create({ name: "Порт Пірей", country: "Греція", dailyFee: 1500, category: "Вузловий" });
+        const p3 = await portRepo.create({ name: "Порт Констанца", country: "Румунія", dailyFee: 950, category: "Регіональний" });
+
+        
+        await visitRepo.create({ shipId: s1.id, portId: p1.id, berthNumber: 12, purpose: "Розвантаження", arrivalDate: "2026-05-10", departureDate: "2026-05-12", cargoPurpose: "Зерно", customsStatus: "Пройдено" });
+        await visitRepo.create({ shipId: s2.id, portId: p2.id, berthNumber: 5, purpose: "Бункерування", arrivalDate: "2026-06-01", departureDate: "2026-06-03", cargoPurpose: "Паливо", customsStatus: "Очікування" });
+        await visitRepo.create({ shipId: s1.id, portId: p2.id, berthNumber: 8, purpose: "Технічний огляд", arrivalDate: "2026-07-15", departureDate: "2026-07-18", cargoPurpose: "Обладнання", customsStatus: "Пройдено" });
+
+        showToast("Усі тестові сутності успішно створено!");
+        cachedShips = [];
+        cachedPorts = [];
+        await switchEntity(activeEntity);
+    } catch (e) {
+        showToast("Помилка генерації даних: " + e.message, true);
+    }
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>'"]/g, 
+        tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+    );
+}
+
+
+if (document.readyState === 'loading') {
+    window.addEventListener('DOMContentLoaded', () => switchEntity('ships'));
+} else {
+    switchEntity('ships');
+}
+</script>
+</body>
+</html>

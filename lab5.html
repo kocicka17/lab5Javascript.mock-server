@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Лабораторна робота №5 — Варіант 19 (Судноплавство)</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            padding: 24px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .card {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h2 { margin-top: 0; color: #0f172a; }
+        code { background: #e2e8f0; padding: 2px 6px; border-radius: 4px; font-family: monospace; }
+        .status-box {
+            background: #0f172a;
+            color: #38bdf8;
+            padding: 16px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Лабораторна робота №5 — Варіант 19 («Судноплавство»)</h2>
+        <p><b>Тема:</b> REST API у поєднанні з ООП-підходом: CRUD через справжній сервер.</p>
+        <p>Всі 5 завдань виконуються асинхронно через клас <code>ApiRepository</code> із виведенням у консоль розробника (<b>F12 → Console</b>) та у блок нижче:</p>
+    </div>
+
+    <div class="card">
+        <h3>Лог виконання запитів:</h3>
+        <div id="logOutput" class="status-box">Запуск лабораторної роботи...</div>
+    </div>
+
+    <script>
+        
+        const logBox = document.getElementById('logOutput');
+        function printLog(msg, obj = null) {
+            console.log(msg, obj !== null ? obj : '');
+            let text = msg;
+            if (obj !== null) {
+                text += '\n' + JSON.stringify(obj, null, 2);
+            }
+            logBox.innerText += '\n' + text;
+        }
+
+        
+        const API_BASE_URL = "http://localhost/mock-server/api.php"; 
+        
+       
+        const STUDENT_PREFIX = "_starunchak";
+
+        
+        class ApiRepository {
+            #baseUrl;
+            #type;
+
+            constructor(baseUrl, type) {
+                this.#baseUrl = baseUrl;
+                this.#type = type;
+            }
+
+            async readAll() {
+                const response = await fetch(`${this.#baseUrl}?type=${this.#type}`);
+                if (!response.ok) throw new Error(`Помилка завантаження: ${response.status}`);
+                return response.json();
+            }
+
+            async readById(id) {
+                const response = await fetch(`${this.#baseUrl}?type=${this.#type}&id=${id}`);
+                if (!response.ok) throw new Error(`Помилка завантаження: ${response.status}`);
+                return response.json();
+            }
+
+            async create(item) {
+                const response = await fetch(`${this.#baseUrl}?type=${this.#type}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(item),
+                });
+                if (!response.ok) throw new Error(`Помилка створення: ${response.status}`);
+                return response.json();
+            }
+
+            async update(id, changes) {
+                const response = await fetch(`${this.#baseUrl}?type=${this.#type}&id=${id}`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(changes),
+                });
+                if (!response.ok) throw new Error(`Помилка оновлення: ${response.status}`);
+                return response.json();
+            }
+
+            async delete(id) {
+                const response = await fetch(`${this.#baseUrl}?type=${this.#type}&id=${id}`, {
+                    method: "DELETE",
+                });
+                if (!response.ok) throw new Error(`Помилка видалення: ${response.status}`);
+                return response.json();
+            }
+        }
+
+        
+        async function runLab5() {
+            try {
+                
+                printLog(">>> ЗАВДАННЯ 2: Ініціалізація екземплярів ApiRepository...");
+                const shipRepo = new ApiRepository(API_BASE_URL, `ship${STUDENT_PREFIX}`);
+                const portRepo = new ApiRepository(API_BASE_URL, `port${STUDENT_PREFIX}`);
+                const visitRepo = new ApiRepository(API_BASE_URL, `visit${STUDENT_PREFIX}`);
+                printLog("Репозиторії успішно ініціалізовано для: ship, port, visit.\n");
+
+              
+                printLog(">>> ЗАВДАННЯ 3: Створення об'єктів на сервері (create) та виведення (readAll)...");
+
+                // 1. Кораблі (Ship: Назва, Порт приписки, Тип, Водотоннажність, Капітан)
+                const s1 = await shipRepo.create({ name: "Одеса", homePort: "Одеса", type: "Контейнеровоз", displacement: "45000т", captain: "Петренко В.І." });
+                const s2 = await shipRepo.create({ name: "Чорноморськ", homePort: "Іллічівськ", type: "Танкер", displacement: "60000т", captain: "Коваленко С.М." });
+                const s3 = await shipRepo.create({ name: "Гетьман Сагайдачний", homePort: "Одеса", type: "Фрегат", displacement: "3500т", captain: "Шевченко П.П." });
+
+                // 2. Порти (Port: Назва, Країна, Ціна одного дня перебування, Категорія)
+                const p1 = await portRepo.create({ name: "Порт Стамбул", country: "Туреччина", dailyFee: 1200, category: "Міжнародний" });
+                const p2 = await portRepo.create({ name: "Порт Пірей", country: "Греція", dailyFee: 1500, category: "Вузловий" });
+                const p3 = await portRepo.create({ name: "Порт Констанца", country: "Румунія", dailyFee: 950, category: "Регіональний" });
+
+                // 3. Відвідування (Visit: shipId, portId, № причалу, Мета, Дата вибуття, Дата прибуття, Мета вантажу, Митний статус)
+                // Створюємо записи, зокрема зв'язуючи перший корабель (s1.id) з двома різними портами (p1.id, p2.id) для Завдання 5
+                const v1 = await visitRepo.create({ shipId: s1.id, portId: p1.id, berthNumber: 12, purpose: "Розвантаження", arrivalDate: "2026-05-10", departureDate: "2026-05-12", cargoPurpose: "Зерно", customsStatus: "Пройдено" });
+                const v2 = await visitRepo.create({ shipId: s2.id, portId: p2.id, berthNumber: 5, purpose: "Бункероування", arrivalDate: "2026-06-01", departureDate: "2026-06-03", cargoPurpose: "Паливо", customsStatus: "Очікування" });
+                const v3 = await visitRepo.create({ shipId: s1.id, portId: p2.id, berthNumber: 8, purpose: "Технічний огляд", arrivalDate: "2026-07-15", departureDate: "2026-07-18", cargoPurpose: "Обладнання", customsStatus: "Пройдено" });
+
+                // Зчитування та виведення в циклі:
+                printLog("--- Список усіх кораблів (Ships) з сервера: ---");
+                const allShips = await shipRepo.readAll();
+                allShips.forEach(s => printLog(`[Корабель ID: ${s.id}] "${s.name}", Порт: ${s.homePort}, Тип: ${s.type}, Капітан: ${s.captain}`));
+
+                printLog("\n--- Список усіх портів (Ports) з сервера: ---");
+                const allPorts = await portRepo.readAll();
+                allPorts.forEach(p => printLog(`[Порт ID: ${p.id}] "${p.name}", Країна: ${p.country}, Ціна/день: ${p.dailyFee}$, Категорія: ${p.category}`));
+
+                printLog("\n--- Список усіх відвідувань (Visits) з сервера: ---");
+                const allVisits = await visitRepo.readAll();
+                allVisits.forEach(v => printLog(`[Відвідування ID: ${v.id}] Корабель ID: ${v.shipId} -> Порт ID: ${v.portId}, Причал №${v.berthNumber}, Мета: ${v.purpose}`));
+
+               
+                printLog("\n>>> ЗАВДАННЯ 4: Демонстрація операцій UPDATE та DELETE...");
+
+               
+                const updatedShip = await shipRepo.update(s1.id, { captain: "Петренко В.І. (Старший капітан)" });
+                printLog(`Оновлено корабель ID ${s1.id}:`, updatedShip);
+
+                const updatedPort = await portRepo.update(p1.id, { dailyFee: 1350 });
+                printLog(`Оновлено порт ID ${p1.id}:`, updatedPort);
+
+                const updatedVisit = await visitRepo.update(v2.id, { customsStatus: "Успішно пройдено" });
+                printLog(`Оновлено відвідування ID ${v2.id}:`, updatedVisit);
+
+               
+                printLog("\nВидалення об'єктів...");
+                await shipRepo.delete(s3.id);
+                printLog(`Корабель ID ${s3.id} успішно видалено.`);
+
+                await portRepo.delete(p3.id);
+                printLog(`Порт ID ${p3.id} успішно видалено.`);
+
+                await visitRepo.delete(v3.id);
+                printLog(`Відвідування ID ${v3.id} успішно видалено.`);
+
+                
+                const remainingVisits = await visitRepo.readAll();
+                printLog("Залишок відвідувань після операції delete:", remainingVisits);
+
+                
+                printLog("\n>>> ЗАВДАННЯ 5: Зв'язок 'багато до багатьох' на реальних даних з сервера...");
+                
+                
+                const v4 = await visitRepo.create({
+                    shipId: s1.id,
+                    portId: p1.id,
+                    berthNumber: 14,
+                    purpose: "Дозаправка",
+                    arrivalDate: "2026-09-01",
+                    departureDate: "2026-09-02",
+                    cargoPurpose: "Паливо",
+                    customsStatus: "Пройдено"
+                });
+
+                
+                const finalShips = await shipRepo.readAll();
+                const finalPorts = await portRepo.readAll();
+                const finalVisits = await visitRepo.readAll();
+
+                
+                const targetShipId = s1.id;
+                const shipObj = finalShips.find(s => s.id === targetShipId);
+                const visitsForShip = finalVisits.filter(v => v.shipId === targetShipId);
+
+                printLog(`Знайдено ${visitsForShip.length} записів відвідувань для корабля "${shipObj?.name}" (ID: ${targetShipId}):`);
+                visitsForShip.forEach(v => {
+                    const portObj = finalPorts.find(p => p.id === v.portId);
+                    printLog(` -> Порт: "${portObj?.name || 'ID ' + v.portId}" (${portObj?.country || ''}), Мета: ${v.purpose}, Вантаж: ${v.cargoPurpose}, Статус: ${v.customsStatus}`);
+                });
+
+                printLog("\n=== ВСІ ЗАВДАННЯ ЛАБОРАТОРНОЇ РОБОТИ №5 УСПІШНО ВИКОНАНО ===");
+
+            } catch (err) {
+                printLog("ПОМИЛКА при виконанні запиту до сервера: " + err.message);
+                printLog("ПЕРЕВІРТЕ: чи запущено веб-сервер та чи доступний API_BASE_URL.");
+            }
+        }
+
+        
+        window.addEventListener('DOMContentLoaded', runLab5);
+    </script>
+</body>
+</html>
