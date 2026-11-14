@@ -120,46 +120,45 @@
         async function runLab5() {
             try {
                 
-                printLog(">>> ЗАВДАННЯ 2: Ініціалізація екземплярів ApiRepository...");
+                printLog(" ЗАВДАННЯ 2: Ініціалізація екземплярів ApiRepository");
                 const shipRepo = new ApiRepository(API_BASE_URL, `ship${STUDENT_PREFIX}`);
                 const portRepo = new ApiRepository(API_BASE_URL, `port${STUDENT_PREFIX}`);
                 const visitRepo = new ApiRepository(API_BASE_URL, `visit${STUDENT_PREFIX}`);
                 printLog("Репозиторії успішно ініціалізовано для: ship, port, visit.\n");
 
               
-                printLog(">>> ЗАВДАННЯ 3: Створення об'єктів на сервері (create) та виведення (readAll)...");
+                printLog(" ЗАВДАННЯ 3: Створення об'єктів на сервері (create) та виведення (readAll)");
 
-                // 1. Кораблі (Ship: Назва, Порт приписки, Тип, Водотоннажність, Капітан)
+               
                 const s1 = await shipRepo.create({ name: "Одеса", homePort: "Одеса", type: "Контейнеровоз", displacement: "45000т", captain: "Петренко В.І." });
                 const s2 = await shipRepo.create({ name: "Чорноморськ", homePort: "Іллічівськ", type: "Танкер", displacement: "60000т", captain: "Коваленко С.М." });
                 const s3 = await shipRepo.create({ name: "Гетьман Сагайдачний", homePort: "Одеса", type: "Фрегат", displacement: "3500т", captain: "Шевченко П.П." });
 
-                // 2. Порти (Port: Назва, Країна, Ціна одного дня перебування, Категорія)
+                
                 const p1 = await portRepo.create({ name: "Порт Стамбул", country: "Туреччина", dailyFee: 1200, category: "Міжнародний" });
                 const p2 = await portRepo.create({ name: "Порт Пірей", country: "Греція", dailyFee: 1500, category: "Вузловий" });
                 const p3 = await portRepo.create({ name: "Порт Констанца", country: "Румунія", dailyFee: 950, category: "Регіональний" });
 
-                // 3. Відвідування (Visit: shipId, portId, № причалу, Мета, Дата вибуття, Дата прибуття, Мета вантажу, Митний статус)
-                // Створюємо записи, зокрема зв'язуючи перший корабель (s1.id) з двома різними портами (p1.id, p2.id) для Завдання 5
+               
                 const v1 = await visitRepo.create({ shipId: s1.id, portId: p1.id, berthNumber: 12, purpose: "Розвантаження", arrivalDate: "2026-05-10", departureDate: "2026-05-12", cargoPurpose: "Зерно", customsStatus: "Пройдено" });
                 const v2 = await visitRepo.create({ shipId: s2.id, portId: p2.id, berthNumber: 5, purpose: "Бункероування", arrivalDate: "2026-06-01", departureDate: "2026-06-03", cargoPurpose: "Паливо", customsStatus: "Очікування" });
                 const v3 = await visitRepo.create({ shipId: s1.id, portId: p2.id, berthNumber: 8, purpose: "Технічний огляд", arrivalDate: "2026-07-15", departureDate: "2026-07-18", cargoPurpose: "Обладнання", customsStatus: "Пройдено" });
 
-                // Зчитування та виведення в циклі:
-                printLog("--- Список усіх кораблів (Ships) з сервера: ---");
+               
+                printLog(" Список усіх кораблів (Ships) з сервера: ");
                 const allShips = await shipRepo.readAll();
                 allShips.forEach(s => printLog(`[Корабель ID: ${s.id}] "${s.name}", Порт: ${s.homePort}, Тип: ${s.type}, Капітан: ${s.captain}`));
 
-                printLog("\n--- Список усіх портів (Ports) з сервера: ---");
+                printLog("\n Список усіх портів (Ports) з сервера: ");
                 const allPorts = await portRepo.readAll();
                 allPorts.forEach(p => printLog(`[Порт ID: ${p.id}] "${p.name}", Країна: ${p.country}, Ціна/день: ${p.dailyFee}$, Категорія: ${p.category}`));
 
-                printLog("\n--- Список усіх відвідувань (Visits) з сервера: ---");
+                printLog("\n Список усіх відвідувань (Visits) з сервера: ");
                 const allVisits = await visitRepo.readAll();
                 allVisits.forEach(v => printLog(`[Відвідування ID: ${v.id}] Корабель ID: ${v.shipId} -> Порт ID: ${v.portId}, Причал №${v.berthNumber}, Мета: ${v.purpose}`));
 
                
-                printLog("\n>>> ЗАВДАННЯ 4: Демонстрація операцій UPDATE та DELETE...");
+                printLog("\n ЗАВДАННЯ 4: Демонстрація операцій UPDATE та DELETE");
 
                
                 const updatedShip = await shipRepo.update(s1.id, { captain: "Петренко В.І. (Старший капітан)" });
@@ -217,7 +216,7 @@
                     printLog(` -> Порт: "${portObj?.name || 'ID ' + v.portId}" (${portObj?.country || ''}), Мета: ${v.purpose}, Вантаж: ${v.cargoPurpose}, Статус: ${v.customsStatus}`);
                 });
 
-                printLog("\n=== ВСІ ЗАВДАННЯ ЛАБОРАТОРНОЇ РОБОТИ №5 УСПІШНО ВИКОНАНО ===");
+                printLog("\n ВСІ ЗАВДАННЯ ЛАБОРАТОРНОЇ РОБОТИ №5 УСПІШНО ВИКОНАНО ");
 
             } catch (err) {
                 printLog("ПОМИЛКА при виконанні запиту до сервера: " + err.message);
